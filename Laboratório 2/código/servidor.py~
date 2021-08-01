@@ -1,0 +1,44 @@
+import socket
+from dados import abreArquivo
+
+HOST = '' 
+PORTA = 5007
+
+
+sock = socket.socket() 
+sock.bind((HOST, PORTA))
+
+sock.listen(5) 
+
+sock.settimeout(10)
+
+while True:
+
+	novoSock, endereco = sock.accept() 
+		
+	while True:
+		msg = novoSock.recv(1024) 
+
+		if not msg: break 
+		
+		try:
+			arquivo, palavra = str(msg, encoding='utf-8').split(";")
+		except Exception as e:
+			novoSock.send(bytes("-2", "utf8"))
+			continue
+		
+		try:
+			dados = abreArquivo(arquivo)
+		except Exception as e:
+			novoSock.send(bytes(str(e), "utf8"))
+			continue
+			
+		
+		novoSock.send(bytes(str(0), "utf8")) 
+		if(str(msg,  encoding='utf-8') == "break"):
+			break
+
+
+	novoSock.close() 
+
+sock.close() 
