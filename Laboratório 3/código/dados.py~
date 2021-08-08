@@ -1,0 +1,10 @@
+def openFile(endereco):
+	try:
+		#abre arquivo
+		f = open(endereco, "r")
+		text = f.read()
+		f.close()
+		return text
+	except OSError:
+		raise Exception("-1")
+
