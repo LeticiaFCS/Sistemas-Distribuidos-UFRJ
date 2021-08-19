@@ -11,11 +11,10 @@ sock.listen(5)
 
 
 novoSock, endereco = sock.accept() 
-print ('Conectado com: ', endereco)
-
+	
 while True:
-
 	msg = novoSock.recv(1024) 
+
 	if not msg: break 
 	
 	novoSock.send(msg) 
