@@ -64,6 +64,8 @@ def new_connection(newSock, id):
 			for thr, a in clientsActive.items():
 				if(a):
 					act = act + str(thr) + '\x00'
+			if(act == ""):
+				act = "Nenhum usuário ativo"+ '\x00'
 			newSock.send(bytes(act, "utf8")) 
 		elif( str(msg,  encoding='utf-8') == '\x01'):
 			if(clientsActive[id]):
@@ -118,8 +120,7 @@ def send_msgs():
 				else:
 					continue			
 			m = '\x00' + str(msg.id_from) + '\x00' + str(msg.m)
-			if(clientsActive[msg.id_to]):
-				sockets[msg.id_to].send( bytes(m, "utf8") )
+			sockets[msg.id_to].send( bytes(m, "utf8") )
 				
 
 			
