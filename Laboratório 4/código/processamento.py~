@@ -5,7 +5,7 @@ import threading
 from queue import Queue
 
 HOST = '' 
-PORTA = 5005 # porta que a aplicacao esta usando
+PORTA = 5002 # porta que a aplicacao esta usando
 
 # cria um socket para comunicacao
 sock = socket.socket() 
@@ -42,8 +42,10 @@ class ReadMsg():
 		self.timeout = timeout
 	
 	def __enter__(self):
-		return msgQueue.get(self.block, self.timeout)
-	
+		try:
+			return msgQueue.get(self.block, self.timeout)
+		except:
+			return None
 	def __exit__(self, exc_type, exc_value, exc_traceback):
 		pass
 	
@@ -97,19 +99,24 @@ def new_connection(newSock, id):
 	newSock.close()
 	clientsActive[id] = False
 
-exited = False
+
 	
 #Método pega próxima mensagem da fila de forma bloqueante
-def nxtMsg(block = True, timeout = None):
+def nxtMsg(block = True, timeout = 30):
 	while not msgQueue.empty():
 		with ReadMsg(block, timeout) as msg:
 			yield msg
 
-
+exited = False
 #Método da thread que envia as mensagens na ordem que foram enfileiradas
 def send_msgs():
 	while not exited:
-		for msg in nxtMsg(not exited):			
+		for msg in nxtMsg():
+			if(msg == None):
+				if(exited):
+					break
+				else:
+					continue			
 			m = '\x00' + str(msg.id_from) + '\x00' + str(msg.m)
 			if(clientsActive[msg.id_to]):
 				sockets[msg.id_to].send( bytes(m, "utf8") )

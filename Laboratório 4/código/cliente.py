@@ -61,7 +61,7 @@ def encode_input(msg):
 	
 	
 HOST = 'localhost' # maquina onde esta o servidor
-PORTA = 5005 # porta que o servidor esta escutando
+PORTA = 5003 # porta que o servidor esta escutando
 
 # cria socket
 sock = socket.socket() 
